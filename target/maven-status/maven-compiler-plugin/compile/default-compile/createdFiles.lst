@@ -1,0 +1,6 @@
+com/jpmorgan/assignment/stockapp/Util/StockType.class
+com/jpmorgan/assignment/stockapp/App.class
+com/jpmorgan/assignment/stockapp/Util/TradeType.class
+com/jpmorgan/assignment/stockapp/service/StockService.class
+com/jpmorgan/assignment/stockapp/entity/Stock.class
+com/jpmorgan/assignment/stockapp/entity/Trade.class
