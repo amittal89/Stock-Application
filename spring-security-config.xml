@@ -45,9 +45,6 @@
 
 		<security:logout logout-url="/logout" success-handler-ref="logoutSuccessHandler" />
 
-<!-- aditya -->
-	<security:intercept-url pattern="/auth/**" access="permitAll"/>
-
 		<security:port-mappings>
 			<security:port-mapping http="#{configurationService.configuration.getProperty('tomcat.http.port')}"
 			                       https="#{configurationService.configuration.getProperty('tomcat.ssl.port')}" />
@@ -57,9 +54,6 @@
 		</security:port-mappings>
 
 		<security:request-cache ref="httpSessionRequestCache" />
-
-<!-- aditya -->
-        <security:custom-filter ref="socialAuthenticationFilter" before="PRE_AUTH_FILTER" />
 
 	</security:http>
 
@@ -95,8 +89,10 @@
 		<security:intercept-url pattern="/my-account/**" access="hasRole('ROLE_CUSTOMERGROUP')" requires-channel="https" />
 
 		<security:intercept-url pattern="/**" requires-channel="https" /> <!-- Everything should be secure -->
-		<!-- aditya -->
+
+<!-- aditya -->
 	<security:intercept-url pattern="/auth/**" access="permitAll"/>
+	 <security:custom-filter ref="socialAuthenticationFilter" before="PRE_AUTH_FILTER" />
 
 		<security:form-login
 				login-page="/login"
@@ -115,14 +111,10 @@
 
 		<security:request-cache ref="httpSessionRequestCache" />
 
-<!-- aditya -->
-        <security:custom-filter ref="socialAuthenticationFilter" before="PRE_AUTH_FILTER" />
-
 	</security:http>
 
 	<security:authentication-manager alias="authenticationManager">
-		<security:authentication-provider ref="acceleratorAuthenticationProvider" />
-		<!-- aditya -->
+		<security:authentication-provider ref="acceleratorAuthenticationProvider" />		
 		 <security:authentication-provider ref="socialAuthenticationProvider"/>
 	</security:authentication-manager>
 	
@@ -140,24 +132,12 @@
         <bean id="socialAuthenticationProvider" class="org.springframework.social.security.SocialAuthenticationProvider">
         <constructor-arg index="0" ref="usersConnectionRepository"/>
         <constructor-arg index="1" ref="socialUserDetailsService"/>
-    </bean>
-    
-    <bean id="connectionFactoryLocator"
-    class="org.springframework.social.security.SocialAuthenticationServiceRegistry">
-    <property name="connectionFactories">
-        <list>
-            <bean class="org.springframework.social.facebook.connect.FacebookConnectionFactory">
-                <constructor-arg index="0" value="1254934897884943" />
-                <constructor-arg index="1" value="a4627917b7cdaeac573c7a2ba09a2624" />	               
-            </bean>
-        </list>
-    </property>
-</bean>
-    
+    </bean>     
+         
     <!-- aditya -->
     <bean id="socialUserDetailsService" class="de.hybris.platform.storefront.SimpleSocialUserDetailsService">
         <constructor-arg index="0" ref="userDetailsService"/>
-    </bean>
+    </bean> 
     
     <!-- aditya -->
     <bean id="userDetailsService" class="de.hybris.platform.commerceservices.spring.security.OriginalUidUserDetailsService" autowire="constructor"/>
@@ -166,25 +146,8 @@
 <bean id="userIdSource" class="org.springframework.social.security.AuthenticationNameUserIdSource"/>
 
 <!-- aditya -->
-<bean id="springSocialConfigurer" class="org.springframework.social.security.SpringSocialConfigurer"/>
-
-<!-- aditya -->
-
-<!-- <bean id="connectionFactoryLocator" class="org.springframework.social.connect.support.ConnectionFactoryRegistry">
-    <property name="connectionFactories">
-        <list>
-            <bean class="org.springframework.social.facebook.connect.FacebookConnectionFactory">
-                <constructor-arg index="0" value="1254934897884943" />
-                <constructor-arg index="1" value="a4627917b7cdaeac573c7a2ba09a2624" />				
-            </bean>
-        </list>
-    </property>
-</bean> -->
-
-<!-- aditya -->
-<bean id="usersConnectionRepository" class="org.springframework.social.connect.mem.InMemoryUsersConnectionRepository">
-        <constructor-arg index="0" ref="connectionFactoryLocator"/>
-    </bean>       
+<bean id="connectController" class="org.springframework.social.connect.web.ConnectController"
+          autowire="constructor"/>     
 
 	<bean id="acceleratorAuthenticationProvider" parent="abstractAcceleratorAuthenticationProvider" 
 			class="de.hybris.platform.storefront.security.AcceleratorAuthenticationProvider">
